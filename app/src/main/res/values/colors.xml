@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 品牌色（来自 Frame 1.svg） -->
+    <color name="brand_yellow">#FFD000</color>
+    <color name="ink">#14100A</color>
+
+    <!-- 基础 -->
+    <color name="background">#FFFDF4</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#FFF4D1</color>
+    <color name="muted">#8A8372</color>
+    <color name="divider">#F1E8CF</color>
+
+    <!-- 强调色（SVG 元素） -->
+    <color name="magenta">#E900FF</color>
+    <color name="pink">#FF0072</color>
+    <color name="coral">#F56B58</color>
+    <color name="green">#1EA500</color>
+    <color name="blue">#271CC4</color>
+
+    <!-- 兼容旧引用 -->
+    <color name="accent">#FFD000</color>
+</resources>

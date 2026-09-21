@@ -1,0 +1,15 @@
+.gradle/
+build/
+*/build/
+.idea/
+*.iml
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local test outputs
+dsp-test/out/
+*.apk
+*.aab
+
