@@ -353,6 +353,8 @@ public final class MainActivity extends Activity implements SensorEventListener 
 
     private void switchTab(int idx) {
         currentTab = idx;
+        // 关于页是独立信息页，使用自己的返回导航，不叠加首页顶栏与底部导航。
+        setChromeVisible(idx == 0 && !showingPlayer);
         if (notchActive != null && notchHost != null) {
             final float target = idx == 0 ? -dp(63) : dp(63);
             notchActive.animate().translationX(target).setInterpolator(new OvershootInterpolator(0.8f)).setDuration(420).start();
@@ -576,7 +578,7 @@ public final class MainActivity extends Activity implements SensorEventListener 
         addAboutBlock(content, abilities, 12);
 
         aboutSectionTitle(content, "开源与社区");
-        LinearLayout github = aboutCard();
+        LinearLayout github = aboutHorizontalCard();
         github.setOnClickListener(v -> openExternal("https://github.com/lmhstart/Chordstem"));
         LinearLayout ghIcon = vbox();
         ghIcon.setGravity(Gravity.CENTER);
@@ -624,6 +626,15 @@ public final class MainActivity extends Activity implements SensorEventListener 
     }
 
     private LinearLayout aboutCard() {
+        LinearLayout card = vbox();
+        card.setPadding(dp(14), dp(14), dp(14), dp(14));
+        GradientDrawable bg = gradientRounded(SURFACE, Color.rgb(255, 249, 231), 18);
+        bg.setStroke(dp(1), DIVIDER);
+        card.setBackground(bg);
+        return card;
+    }
+
+    private LinearLayout aboutHorizontalCard() {
         LinearLayout card = hbox();
         card.setPadding(dp(14), dp(14), dp(14), dp(14));
         GradientDrawable bg = gradientRounded(SURFACE, Color.rgb(255, 249, 231), 18);
