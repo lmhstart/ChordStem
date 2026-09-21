@@ -529,46 +529,142 @@ public final class MainActivity extends Activity implements SensorEventListener 
         scroll.setFillViewport(true);
         scroll.setBackground(texture(BG, Color.rgb(255, 248, 222)));
         LinearLayout content = vbox();
-        content.setPadding(dp(18), dp(24), dp(18), dp(40));
+        content.setPadding(dp(18), dp(18), dp(18), dp(36));
         scroll.addView(content, matchWrap());
 
-        LinearLayout logo = vbox();
-        logo.setGravity(Gravity.CENTER);
-        TextView dot = label("◉", 56, BRAND, Typeface.BOLD);
-        dot.setGravity(Gravity.CENTER);
-        logo.addView(dot);
-        logo.addView(label("ChordStem", 28, INK, Typeface.BOLD));
-        TextView tag = label("和弦 · 分轨 · 离线混音", 13, MUTED, Typeface.NORMAL);
-        LinearLayout.LayoutParams tagp = wrapWrap(); tagp.topMargin = dp(4);
-        logo.addView(tag, tagp);
-        content.addView(logo, matchWrap());
-        content.addView(new Space(this), new LinearLayout.LayoutParams(1, dp(24)));
+        LinearLayout top = hbox();
+        TextView back = navIcon("back");
+        back.setOnClickListener(v -> showHome());
+        top.addView(back, new LinearLayout.LayoutParams(dp(44), dp(44)));
+        top.addView(label("关于 ChordStem", 20, INK, Typeface.BOLD), weightedWrap());
+        content.addView(top, matchWrap());
 
-        aboutRow(content, "🔒", "完全离线", "AI 分轨与和弦分析均在手机本地运行，不上传任何音频。");
-        aboutRow(content, "🚫", "无账号无广告", "不收集个人信息，没有弹窗广告。");
-        aboutRow(content, "⚙️", "技术栈", "Conv-TasNet (ONNX Runtime) · 离线和弦识别。");
-        aboutRow(content, "📦", "版本", "0.4.0 · ChordStem · 仅 arm64 设备。");
+        LinearLayout hero = aboutCard();
+        LinearLayout heroHead = hbox();
+        ImageView appIcon = new ImageView(this);
+        appIcon.setImageResource(R.drawable.icon);
+        appIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        appIcon.setPadding(dp(10), dp(10), dp(10), dp(10));
+        appIcon.setBackground(roundBg(BRAND, 18));
+        heroHead.addView(appIcon, new LinearLayout.LayoutParams(dp(72), dp(72)));
+        LinearLayout heroText = vbox();
+        LinearLayout.LayoutParams htp = weightedWrap(); htp.leftMargin = dp(14);
+        heroHead.addView(heroText, htp);
+        heroText.addView(label("ChordStem", 23, INK, Typeface.BOLD));
+        heroText.addView(label("离线音频工作台", 13, MUTED, Typeface.NORMAL));
+        TextView version = badge("版本 6.1.0", MAGENTA);
+        LinearLayout.LayoutParams vp = wrapWrap(); vp.topMargin = dp(7);
+        heroText.addView(version, vp);
+        hero.addView(heroHead, matchWrap());
+        TextView intro = label("在本机完成分轨、和弦分析、BPM 识别和混音。", 14, INK, Typeface.NORMAL);
+        intro.setLineSpacing(0, 1.2f);
+        LinearLayout.LayoutParams ip = matchWrap(); ip.topMargin = dp(16);
+        hero.addView(intro, ip);
+        addAboutBlock(content, hero, 12);
+
+        aboutSectionTitle(content, "核心能力");
+        LinearLayout abilities = vbox();
+        LinearLayout abilityRow1 = hbox();
+        abilityRow1.addView(aboutChip("AI 分轨", MAGENTA), weightedWithEnd(1f, 6));
+        abilityRow1.addView(aboutChip("和弦分析", BLUE), weightedWrap());
+        abilities.addView(abilityRow1, matchWrap());
+        LinearLayout abilityRow2 = hbox();
+        abilityRow2.addView(aboutChip("BPM 识别", CORAL), weightedWithEnd(1f, 6));
+        abilityRow2.addView(aboutChip("本地导出", GREEN), weightedWrap());
+        LinearLayout.LayoutParams ar2 = matchWrap(); ar2.topMargin = dp(6);
+        abilities.addView(abilityRow2, ar2);
+        addAboutBlock(content, abilities, 12);
+
+        aboutSectionTitle(content, "开源与社区");
+        LinearLayout github = aboutCard();
+        github.setOnClickListener(v -> openExternal("https://github.com/lmhstart/Chordstem"));
+        LinearLayout ghIcon = vbox();
+        ghIcon.setGravity(Gravity.CENTER);
+        ghIcon.setBackground(roundBg(alpha(BLUE, 28), 15));
+        ghIcon.addView(iconLabel("code", 24, BLUE), new LinearLayout.LayoutParams(dp(48), dp(48)));
+        github.addView(ghIcon, new LinearLayout.LayoutParams(dp(48), dp(48)));
+        LinearLayout ghText = vbox();
+        LinearLayout.LayoutParams ghp = weightedWrap(); ghp.leftMargin = dp(12);
+        github.addView(ghText, ghp);
+        ghText.addView(label("GitHub 开源项目", 15, INK, Typeface.BOLD));
+        ghText.addView(label("查看源代码 · 提交 Issue · 欢迎 Star", 12, MUTED, Typeface.NORMAL));
+        TextView arrow = label("↗", 22, BLUE, Typeface.BOLD);
+        github.addView(arrow, new LinearLayout.LayoutParams(dp(30), dp(48)));
+        addAboutBlock(content, github, 8);
+
+        aboutSectionTitle(content, "隐私与运行方式");
+        LinearLayout privacy = aboutCard();
+        privacy.addView(label("完全离线", 15, INK, Typeface.BOLD));
+        TextView privacyDesc = label("所有音频均在本机处理\n无需账号，不上传音频，不依赖云端服务", 13, MUTED, Typeface.NORMAL);
+        privacyDesc.setLineSpacing(0, 1.25f);
+        LinearLayout.LayoutParams pdp = matchWrap(); pdp.topMargin = dp(6);
+        privacy.addView(privacyDesc, pdp);
+        addAboutBlock(content, privacy, 12);
+
+        aboutSectionTitle(content, "技术信息");
+        LinearLayout tech = aboutCard();
+        aboutInfoRow(tech, "ONNX Runtime", "AI 分轨推理");
+        aboutInfoRow(tech, "Android MediaCodec", "本地音频解码与播放");
+        aboutInfoRow(tech, "本地音频分析引擎", "和弦、BPM 与调式估计");
+        addAboutBlock(content, tech, 12);
+
+        aboutSectionTitle(content, "版本信息");
+        LinearLayout info = aboutCard();
+        aboutInfoRow(info, "版本", "6.1.0");
+        aboutInfoRow(info, "构建号", "61");
+        aboutInfoRow(info, "最低支持", "Android 7.0+");
+        aboutInfoRow(info, "作者", "lmhstart");
+        addAboutBlock(content, info, 20);
+
+        TextView footer = label("Made for music makers", 12, MUTED, Typeface.BOLD);
+        footer.setGravity(Gravity.CENTER);
+        content.addView(footer, matchWrap());
 
         setContent(scroll);
     }
 
-    private void aboutRow(LinearLayout parent, String icon, String title, String desc) {
+    private LinearLayout aboutCard() {
+        LinearLayout card = hbox();
+        card.setPadding(dp(14), dp(14), dp(14), dp(14));
+        GradientDrawable bg = gradientRounded(SURFACE, Color.rgb(255, 249, 231), 18);
+        bg.setStroke(dp(1), DIVIDER);
+        card.setBackground(bg);
+        return card;
+    }
+
+    private TextView aboutChip(String text, int accent) {
+        TextView chip = label(text, 13, INK, Typeface.BOLD);
+        chip.setGravity(Gravity.CENTER);
+        chip.setPadding(dp(8), dp(12), dp(8), dp(12));
+        chip.setBackground(rippleFrom(gradientRounded(SURFACE, alpha(accent, 24), 15)));
+        return chip;
+    }
+
+    private void aboutSectionTitle(LinearLayout parent, String title) {
+        TextView t = label(title, 14, INK, Typeface.BOLD);
+        LinearLayout.LayoutParams p = matchWrap(); p.topMargin = dp(16); p.bottomMargin = dp(8);
+        parent.addView(t, p);
+    }
+
+    private void addAboutBlock(LinearLayout parent, View block, int topMargin) {
+        LinearLayout.LayoutParams p = matchWrap(); p.topMargin = dp(topMargin);
+        parent.addView(block, p);
+    }
+
+    private void aboutInfoRow(LinearLayout parent, String name, String value) {
         LinearLayout row = hbox();
-        row.setGravity(Gravity.TOP);
-        row.setPadding(dp(2), dp(10), dp(2), dp(10));
-        TextView ic = label(icon, 20, INK, Typeface.NORMAL);
-        ic.setGravity(Gravity.CENTER);
-        row.addView(ic, new LinearLayout.LayoutParams(dp(32), dp(32)));
-        LinearLayout w = vbox();
-        LinearLayout.LayoutParams wp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        wp.leftMargin = dp(12);
-        row.addView(w, wp);
-        w.addView(label(title, 14, INK, Typeface.BOLD));
-        TextView d = label(desc, 12, MUTED, Typeface.NORMAL);
-        d.setLineSpacing(0, 1.2f);
-        LinearLayout.LayoutParams dp2 = wrapWrap(); dp2.topMargin = dp(2);
-        w.addView(d, dp2);
-        parent.addView(row, matchWrap());
+        TextView left = label(name, 13, INK, Typeface.BOLD);
+        row.addView(left, weightedWrap());
+        TextView right = label(value, 12, MUTED, Typeface.NORMAL);
+        right.setGravity(Gravity.RIGHT);
+        row.addView(right, wrapWrap());
+        LinearLayout.LayoutParams p = matchWrap(); p.topMargin = dp(4); p.bottomMargin = dp(4);
+        parent.addView(row, p);
+    }
+
+    private void openExternal(String url) {
+        try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); }
+        catch (Exception ignored) { toast("暂时无法打开链接"); }
     }
 
     private void setContent(View v) {
@@ -1335,6 +1431,7 @@ public final class MainActivity extends Activity implements SensorEventListener 
         else if ("layers".equals(key)) glyph = "≋";
         else if ("play".equals(key)) glyph = "▶";
         else if ("back".equals(key)) glyph = "‹";
+        else if ("code".equals(key)) glyph = "⌘";
         else glyph = key;
         TextView t = label(glyph, sp, color, Typeface.BOLD);
         t.setGravity(Gravity.CENTER);
@@ -1460,7 +1557,13 @@ public final class MainActivity extends Activity implements SensorEventListener 
     private LinearLayout.LayoutParams matchWrap() { return new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); }
     private LinearLayout.LayoutParams wrapWrap() { return new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT); }
     private LinearLayout.LayoutParams weighted(int h, float w) { return new LinearLayout.LayoutParams(0, h, w); }
+    private LinearLayout.LayoutParams weightedWrap() { return weightedWrap(1f); }
     private LinearLayout.LayoutParams weightedWrap(float w) { return new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, w); }
+    private LinearLayout.LayoutParams weightedWithEnd(float w, int endMarginDp) {
+        LinearLayout.LayoutParams p = weightedWrap(w);
+        p.rightMargin = dp(endMarginDp);
+        return p;
+    }
     private int dp(int v) { return Math.round(v * getResources().getDisplayMetrics().density); }
     private void toast(String m) { Toast.makeText(this, m, Toast.LENGTH_SHORT).show(); }
 
